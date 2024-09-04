@@ -1,8 +1,8 @@
-import { Frog } from 'frog'
+import { Frog, Button } from 'frog'
 //import { exploreDelegatesFrame } from './frames/exploreDelegatesFrame.js';
-import {getStats } from './service/statsService.js';
-import { DelegatesResponseDTO } from './service/delegatesResponseDTO.js';
-import { errorFrame } from './frames/errorFrame.js';
+//import {getStats } from './service/statsService.js';
+//import { DelegatesResponseDTO } from './service/delegatesResponseDTO.js';
+//import { errorFrame } from './frames/errorFrame.js';
 //import { noVerifiedAddressFrame } from './frames/noVerifiedAddressFrame.js';
 //import { noDelegateFrame } from './frames/noDelegateFrame.js';
 //import { goodDelegateFrame } from './frames/goodDelegateFrame.js';
@@ -14,15 +14,37 @@ export const delegatesStatsFrame = new Frog({
 })
  
 delegatesStatsFrame.frame('/', async (c) => {
-  const { frameData, verified } = c;
-  const { fid } = frameData || {}    
+  const {  verified } = c;
+  //const { fid } = frameData || {}    
 /*   const { inputText } = c;
   const fid = inputText === undefined ? c.frameData?.fid : Number(inputText) */
 
-if ( verified){
+  if (!verified){
+    return c.res({
+      image: `/Frame_4_not_verified.png`,
+      imageAspectRatio: '1.91:1',
+      intents: [
+          <Button.Reset>Try again</Button.Reset>,
+      ],
+  })
+  } 
 
-  if(fid === undefined) {
-    return errorFrame(c)
+  return c.res({
+    image: `/Frame_6_error.png`,
+    imageAspectRatio: '1.91:1',
+    intents: [
+      <Button.Reset>Try again</Button.Reset>,
+    ],
+  })
+
+/*   if (fid === undefined){
+    return c.res({
+      image: `/Frame_6_error.png`,
+      imageAspectRatio: '1.91:1',
+      intents: [
+        <Button.Reset>Try again</Button.Reset>,
+      ],
+    })
   }
 
   let delegate : DelegatesResponseDTO
@@ -30,11 +52,17 @@ if ( verified){
   try {
     delegate = await getStats(fid)
   } catch (e) {
-    return errorFrame(c)
-  } 
-  
-}
-return errorFrame(c)
+    return c.res({
+      image: `/Frame_6_error.png`,
+      imageAspectRatio: '1.91:1',
+      intents: [
+        <Button.Reset>Try again</Button.Reset>,
+      ],
+    })
+  }  */
+
+
+
 
 /* if(!delegate.hasVerifiedAddress) {
   return noVerifiedAddressFrame(c)
