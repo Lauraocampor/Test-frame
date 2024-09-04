@@ -7,13 +7,15 @@ import { Frog, Button } from 'frog'
 //import { noDelegateFrame } from './frames/noDelegateFrame.js';
 //import { goodDelegateFrame } from './frames/goodDelegateFrame.js';
 //import { badDelegateFrame } from './frames/badDelegateFrame.js';
+
+import { handle } from 'frog/vercel'
  
-export const delegatesStatsFrame = new Frog({
+export const app = new Frog({
   //basePath: '/api/delegatesStats',
   title: 'Delegates Stats Frame',
 })
  
-delegatesStatsFrame.frame('/', async (c) => {
+app.frame('/', async (c) => {
   const {  verified } = c;
   //const { fid } = frameData || {}    
 /*   const { inputText } = c;
@@ -21,7 +23,7 @@ delegatesStatsFrame.frame('/', async (c) => {
 
   if (!verified){
     return c.res({
-      image: `${process.env.IMAGE_URL}/Frame_4_not_verified.png`,
+      image: `/Frame_4_not_verified.png`,
       imageAspectRatio: '1.91:1',
       intents: [
           <Button.Reset>Try again</Button.Reset>,
@@ -30,7 +32,7 @@ delegatesStatsFrame.frame('/', async (c) => {
   } 
 
   return c.res({
-    image: `${process.env.IMAGE_URL}/Frame_6_error.png`,
+    image: `/Frame_6_error.png`,
     imageAspectRatio: '1.91:1',
     intents: [
       <Button.Reset>Try again</Button.Reset>,
@@ -85,3 +87,7 @@ delegatesStatsFrame.frame('/', async (c) => {
 })
 
 //delegatesStatsFrame.route('/exploreDelegates', exploreDelegatesFrame)
+
+
+export const GET = handle(app)
+export const POST = handle(app)
