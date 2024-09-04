@@ -46,7 +46,7 @@ app.frame('/delegatesStats', async (c) => {
   const {  frameData } = c;
  const { fid } = frameData || {}   
 
- if (fid === undefined){
+/*  if (fid === undefined){
   return c.res({
     image: `/Frame_6_error.png`,
     imageAspectRatio: '1.91:1',
@@ -54,7 +54,7 @@ app.frame('/delegatesStats', async (c) => {
       <Button.Reset>Try again</Button.Reset>,
     ],
   })
-}
+} */
 
 let delegate: DelegatesResponseDTO;
 
