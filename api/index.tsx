@@ -45,7 +45,78 @@ app.frame('/', (c) => {
   })
 })
 
-app.route('/delegatesStats', delegatesStatsFrame)
+app.frame('/delegatesStats', async (c) => {
+  const {  verified } = c;
+  //const { fid } = frameData || {}    
+/*   const { inputText } = c;
+  const fid = inputText === undefined ? c.frameData?.fid : Number(inputText) */
+
+  if (!verified){
+    return c.res({
+      image: `${process.env.IMAGE_URL}/Frame_4_not_verified.png`,
+      imageAspectRatio: '1.91:1',
+      intents: [
+          <Button.Reset>Try again</Button.Reset>,
+      ],
+  })
+  } 
+
+  return c.res({
+    image: `${process.env.IMAGE_URL}/Frame_6_error.png`,
+    imageAspectRatio: '1.91:1',
+    intents: [
+      <Button.Reset>Try again</Button.Reset>,
+    ],
+  })
+
+/*   if (fid === undefined){
+    return c.res({
+      image: `/Frame_6_error.png`,
+      imageAspectRatio: '1.91:1',
+      intents: [
+        <Button.Reset>Try again</Button.Reset>,
+      ],
+    })
+  }
+
+  let delegate : DelegatesResponseDTO
+
+  try {
+    delegate = await getStats(fid)
+  } catch (e) {
+    return c.res({
+      image: `/Frame_6_error.png`,
+      imageAspectRatio: '1.91:1',
+      intents: [
+        <Button.Reset>Try again</Button.Reset>,
+      ],
+    })
+  }  */
+
+
+
+
+/* if(!delegate.hasVerifiedAddress) {
+  return noVerifiedAddressFrame(c)
+}   */ 
+/*   delegate.hasVerifiedAddress = true
+  delegate.hasDelegate = true
+  delegate.isGoodDelegate = false */
+
+
+/*   if(!delegate.hasDelegate) {
+    return noDelegateFrame(c)
+  } */
+    //return noDelegateFrame(c)
+/*   if(!delegate.isGoodDelegate) {
+    return badDelegateFrame(fid, c)
+  }
+
+  return goodDelegateFrame(fid, c)   */  
+
+})
+
+//app.route('/delegatesStats', delegatesStatsFrame)
 
 // @ts-ignore
 const isEdgeFunction = typeof EdgeFunction !== 'undefined'
