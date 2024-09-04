@@ -8,7 +8,7 @@ import { serveStatic } from 'frog/serve-static'
 import { neynar } from 'frog/hubs'
 import { handle } from 'frog/vercel'
 
-import { app as delegatesStatsFrame } from './delegatesStatsFrame.js'
+import { app as delegatesStatsFrame } from './delegatesStatsFrame.tsx'
 
 // Uncomment to use Edge Runtime.
 // export const config = {
