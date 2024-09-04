@@ -36,7 +36,6 @@ export const app = new Frog({
 app.frame('/', (c) => {
   
   return c.res({
-    action:  '/delegatesStats',
     image: `/Frame_1_start.png`,
     imageAspectRatio: '1.91:1',
     intents: [

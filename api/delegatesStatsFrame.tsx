@@ -11,7 +11,7 @@ import { noDelegateFrame } from './frames/noDelegateFrame.js';
 export const delegatesStatsFrame = new Frog({ title: 'Delegate Stats Frame' })
  
 delegatesStatsFrame.frame('/', async (c) => {
-  const { frameData} = c;
+  const { frameData } = c;
   const { fid } = frameData || {}    
 /*   const { inputText } = c;
   const fid = inputText === undefined ? c.frameData?.fid : Number(inputText) */
