@@ -44,10 +44,9 @@ app.frame('/', (c) => {
 })
 
 app.frame('/delegatesStats', async (c) => {
-  /* const {  frameData } = c;
- const { fid } = frameData || {}   */ 
+  const {  frameData } = c;
+ const { fid } = frameData || {}   
 
- const fid = 192336
 
  if (fid === undefined){
   return c.res({
@@ -116,8 +115,6 @@ try {
       ],
     })
   }
-
-  delegate.isGoodDelegate=false
 
   const userDelegate = delegate.delegateInfo.warpcast
   const addressDelegate = delegate.delegateInfo.delegateAddress
