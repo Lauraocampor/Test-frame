@@ -8,7 +8,7 @@ import { serveStatic } from 'frog/serve-static'
 import { neynar } from 'frog/hubs'
 import { handle } from 'frog/vercel'
 
-//import { delegatesStatsFrame } from './delegatesStatsFrame.js'
+import { delegatesStatsFrame } from './delegatesStatsFrame.js'
 
 // Uncomment to use Edge Runtime.
 // export const config = {
@@ -45,7 +45,7 @@ app.frame('/', (c) => {
   })
 })
 
-//app.route('/delegatesStats', delegatesStatsFrame)
+app.route('/delegatesStats', delegatesStatsFrame)
 
 // @ts-ignore
 const isEdgeFunction = typeof EdgeFunction !== 'undefined'
