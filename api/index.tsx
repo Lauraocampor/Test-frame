@@ -6,8 +6,9 @@ import { neynar } from 'frog/hubs'
 import { handle } from 'frog/vercel'
 import { devtools } from 'frog/dev'
 import { serveStatic } from 'frog/serve-static'
-//import {getStats } from './service/statsService.js';
+
 import { DelegatesResponseDTO } from './service/delegatesResponseDTO.js';
+//import { addressCount, suggestionResponseDTO } from './service/suggestionResponseDTO.js';
 
 // Uncomment to use Edge Runtime.
 // export const config = {
@@ -43,10 +44,12 @@ app.frame('/', (c) => {
 })
 
 app.frame('/delegatesStats', async (c) => {
-  const {  frameData } = c;
- const { fid } = frameData || {}   
+  /* const {  frameData } = c;
+ const { fid } = frameData || {}   */ 
 
-/*  if (fid === undefined){
+ const fid = 192336
+
+ if (fid === undefined){
   return c.res({
     image: `/Frame_6_error.png`,
     imageAspectRatio: '1.91:1',
@@ -54,7 +57,7 @@ app.frame('/delegatesStats', async (c) => {
       <Button.Reset>Try again</Button.Reset>,
     ],
   })
-} */
+}
 
 let delegate: DelegatesResponseDTO;
 
@@ -85,7 +88,7 @@ try {
   console.error('Error fetching delegate data:', e);
 
   return c.res({
-    image: `/back2.png`,
+    image: `/Frame_6_error.png`,
     imageAspectRatio: '1.91:1',
     intents: [
       <Button.Reset>Try again</Button.Reset>,
@@ -113,6 +116,9 @@ try {
       ],
     })
   }
+
+  delegate.isGoodDelegate=false
+
   const userDelegate = delegate.delegateInfo.warpcast
   const addressDelegate = delegate.delegateInfo.delegateAddress
 
@@ -210,6 +216,9 @@ try {
       })
 
 })
+
+
+
 
 // @ts-ignore
 const isEdgeFunction = typeof EdgeFunction !== 'undefined'
