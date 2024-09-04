@@ -11,7 +11,6 @@ import { Frog, Button } from 'frog'
 import { handle } from 'frog/vercel'
  
 export const app = new Frog({
-  //basePath: '/api/delegatesStats',
   title: 'Delegates Stats Frame',
 })
  
