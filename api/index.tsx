@@ -20,7 +20,7 @@ export const app = new Frog({
   basePath: '/api',
   hub: neynar({ apiKey: 'NEYNAR_FROG_FM' }),
   title: 'Delegates Frame',
-  verify: 'silent',
+/*   verify: 'silent', */
   imageOptions: {
     fonts: [
       {
@@ -36,7 +36,7 @@ export const app = new Frog({
 app.frame('/', (c) => {
   
   return c.res({
-    action:  '/delegatesStats',
+/*     action:  '/delegatesStats', */
     image: `/Frame_1_start.png`,
     imageAspectRatio: '1.91:1',
     intents: [
