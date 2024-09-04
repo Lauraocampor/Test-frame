@@ -36,7 +36,7 @@ export const app = new Frog({
 app.frame('/', (c) => {
   
   return c.res({
-    image: `${process.env.IMAGE_URL}/Frame_1_start.png`,
+    image: `/Frame_1_start.png`,
     imageAspectRatio: '1.91:1',
     intents: [
       <TextInput placeholder="Enter fid..." />,
@@ -53,7 +53,7 @@ app.frame('/delegatesStats', async (c) => {
 
   if (!verified){
     return c.res({
-      image: `${process.env.IMAGE_URL}/Frame_4_not_verified.png`,
+      image: `/Frame_4_not_verified.png`,
       imageAspectRatio: '1.91:1',
       intents: [
           <Button.Reset>Try again</Button.Reset>,
@@ -62,7 +62,7 @@ app.frame('/delegatesStats', async (c) => {
   } 
 
   return c.res({
-    image: `${process.env.IMAGE_URL}/Frame_6_error.png`,
+    image: `/Frame_6_error.png`,
     imageAspectRatio: '1.91:1',
     intents: [
       <Button.Reset>Try again</Button.Reset>,
