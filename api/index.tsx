@@ -8,7 +8,7 @@ import { serveStatic } from 'frog/serve-static'
 import { neynar } from 'frog/hubs'
 import { handle } from 'frog/vercel'
 
-import { delegatesStatsFrame } from './delegatesStatsFrame.js'
+//import { delegatesStatsFrame } from './delegatesStatsFrame.js'
 
 // Uncomment to use Edge Runtime.
 // export const config = {
@@ -124,3 +124,4 @@ const isProduction = isEdgeFunction || import.meta.env?.MODE !== 'development'
 devtools(app, isProduction ? { assetsPath: '/.frog' } : { serveStatic })
 
 export const GET = handle(app)
+export const POST = handle(app)
