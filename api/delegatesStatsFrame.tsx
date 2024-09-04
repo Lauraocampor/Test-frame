@@ -23,7 +23,7 @@ app.frame('/', async (c) => {
 
   if (!verified){
     return c.res({
-      image: `/Frame_4_not_verified.png`,
+      image: `${process.env.IMAGE_URL}/Frame_4_not_verified.png`,
       imageAspectRatio: '1.91:1',
       intents: [
           <Button.Reset>Try again</Button.Reset>,
@@ -32,7 +32,7 @@ app.frame('/', async (c) => {
   } 
 
   return c.res({
-    image: `/Frame_6_error.png`,
+    image: `${process.env.IMAGE_URL}/Frame_6_error.png`,
     imageAspectRatio: '1.91:1',
     intents: [
       <Button.Reset>Try again</Button.Reset>,
