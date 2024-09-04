@@ -5,8 +5,8 @@ import { DelegatesResponseDTO } from './service/delegatesResponseDTO.js';
 import { errorFrame } from './frames/errorFrame.js';
 import { noVerifiedAddressFrame } from './frames/noVerifiedAddressFrame.js';
 import { noDelegateFrame } from './frames/noDelegateFrame.js';
-import { goodDelegateFrame } from './frames/goodDelegateFrame.js';
-import { badDelegateFrame } from './frames/badDelegateFrame.js';
+//import { goodDelegateFrame } from './frames/goodDelegateFrame.js';
+//import { badDelegateFrame } from './frames/badDelegateFrame.js';
  
 export const delegatesStatsFrame = new Frog({ title: 'Delegate Stats Frame' })
  
@@ -37,15 +37,15 @@ delegatesStatsFrame.frame('/', async (c) => {
     return noVerifiedAddressFrame(c)
   }   
 
-  if(!delegate.hasDelegate) {
+/*   if(!delegate.hasDelegate) {
     return noDelegateFrame(c)
-  }
-
-  if(!delegate.isGoodDelegate) {
+  } */
+    return noDelegateFrame(c)
+/*   if(!delegate.isGoodDelegate) {
     return badDelegateFrame(fid, c)
   }
 
-  return goodDelegateFrame(fid, c)    
+  return goodDelegateFrame(fid, c)   */  
 })
 
 //delegatesStatsFrame.route('/exploreDelegates', exploreDelegatesFrame)
