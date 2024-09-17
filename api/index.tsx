@@ -5,6 +5,7 @@ import { Button, Frog, FrameIntent } from 'frog'
 import { neynar } from 'frog/hubs'
 import { handle } from 'frog/vercel'
 import { devtools } from 'frog/dev'
+import { postComposerCreateCastActionMessage } from 'frog/next'
 import { serveStatic } from 'frog/serve-static'
 
 import { DelegatesResponseDTO } from './service/delegatesResponseDTO.js';
@@ -43,9 +44,10 @@ app.frame('/', (c) => {
 })
 
 app.frame('/delegatesStats', async (c) => {
-  const {  frameData } = c;
- const { fid } = frameData || {}   
+ /*  const {  frameData } = c;
+ const { fid, url } = frameData || {}    */
 
+ const fid = 192336
 
  if (fid === undefined){
   return c.res({
@@ -206,7 +208,7 @@ try {
           </div>
         ),
         intents: [
-          <Button.Link href='https://warpcast.com/lauraocampo'>Share</Button.Link>,
+          ,
           <Button.Reset>Reset</Button.Reset>
         ],
       })
