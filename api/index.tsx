@@ -34,7 +34,7 @@ export const app = new Frog({
 
 app.frame('/', (c) => {
   return c.res({
-    image: `/Frame_1_start.png`,
+    image: `/Frame_1_start_op.png`,
     imageAspectRatio: '1.91:1',
     intents: [
       <Button action="/delegatesStats">View Stats</Button>
@@ -95,6 +95,8 @@ try {
   });
 }
 
+  /* NO VERIFIED ADDRESS FRAME */
+
   if (!delegate.hasVerifiedAddress){
     return c.res({
       image: `/Frame_4_not_verified.png`,
@@ -105,12 +107,15 @@ try {
   })
   }
   
+  /* NO DELEGATE FRAME */
+
   if(!delegate.hasDelegate) {
     return c.res({
       image: `/Frame_5_no_delegate.png`,
       imageAspectRatio: '1.91:1',
       intents: [
-        <Button action='/exploreDelegates'>Explore delegates</Button>,
+        <Button action='/socialRecommendation'>People I follow</Button>,
+        <Button action='/randomRecommendation'>Random</Button>,
         <Button.Reset>Reset</Button.Reset>,
       ],
     })
@@ -121,6 +126,11 @@ try {
 
   const delegateData = userDelegate? userDelegate : addressDelegate
   const delegateUpperCase= delegateData.toUpperCase()
+
+  delegate.isGoodDelegate = false
+
+  /* BAD DELEGATE FRAME */
+
   if(!delegate.isGoodDelegate) {
 
     return c.res({
@@ -136,7 +146,7 @@ try {
             position: 'relative'
           }}>
             {/* @ts-ignore */}
-            <img width="1200" height="630" alt="background" src={`/Frame_2.1_bad_delegate_stats_dynamic.png`} style={{position: 'absolute', width: '100%', height: '100%', objectFit: 'cover'}} />
+            <img width="1200" height="630" alt="background" src={`/Frame_2.1_stats_dynamic.png`} style={{position: 'absolute', width: '100%', height: '100%', objectFit: 'cover'}} />
             <div
               style={{
                 display: 'flex',
@@ -166,7 +176,9 @@ try {
           </div>
         ),
         intents: [
-          <Button action='/exploreDelegates'>Explore delegates</Button>,
+          <Button action='/socialRecommendation'>People I follow</Button>,
+          <Button action='/randomRecommendation'>Random</Button>,
+          <Button.Reset>Reset</Button.Reset>
         ],
       })
   }
@@ -175,6 +187,8 @@ try {
   if (typeof userDelegate !== 'string' || userDelegate === null) {
     throw new Error('Invalid type returned');
   }
+
+  /* GOOD DELEGATE FRAME */
     return c.res({
       image: (
         <div style={{
@@ -245,7 +259,7 @@ function truncateMiddle (text: string, maxLength: number) : string{
   return text.slice(0, start) + '...' + text.slice(-end)
 }
 
-app.frame('/exploreDelegates', async (c) => {
+app.frame('/socialRecommendation', async (c) => {
  /* const {  frameData } = c;
  const { fid } = frameData || {} */
 
@@ -286,7 +300,7 @@ app.frame('/exploreDelegates', async (c) => {
 }
 if (delegates.length === 0) {
   return c.res({
-    image: `/back2.png`,
+    image: `/Frame_8_no_followers.png`,
     imageAspectRatio: '1.91:1',
     intents: [<Button.Reset>Try again</Button.Reset>],
   });
@@ -305,7 +319,135 @@ image: (
     position: 'relative',
   }}
 > 
-  <img width="1200" height="630" alt="background" src={`/Frame_3.png`} />
+  <img width="1200" height="630" alt="background" src={`/Frame_3_social.png`} />
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      position: 'absolute',
+      color: '#161B33',
+      fontSize: '70px',
+      textTransform: 'uppercase',
+      letterSpacing: '-0.030em',
+      width: '100%',
+      lineHeight: 1.1,
+      boxSizing: 'border-box',
+      alignItems: 'center',
+      padding: '0px',
+      overflow: 'hidden', 
+      textOverflow: 'ellipsis',
+      textAlign: 'center', 
+      top: '18%',
+      height: '80%',
+    }}>      
+    <div style={{
+      display: 'flex',
+      flexDirection: 'row', 
+      flexWrap: 'wrap', 
+      width: '100%',
+      maxWidth: '100%',
+      justifyContent: 'center',
+    }}>
+      {[0, 1, 2].map(colIndex => (
+        <div key={colIndex} style={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '30%', 
+          boxSizing: 'border-box',
+          margin: '0 20px', 
+        }}>
+          {delegates
+            .filter((_, index) => index % 3 === colIndex)
+            .map((item, index) => (
+              <div key={index} style={{
+                display: 'flex',
+                flexDirection: 'column', 
+                margin: '5px 0',
+                alignItems: 'center',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                color: colIndex === 1 ? '#E5383B' : '#36A4B4',
+                height: 'auto',
+              }}>                    
+                {truncateMiddle(item.address, 11)}
+                <br/>
+                {item.count}
+              </div>
+            ))
+          }
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+),
+intents,
+});
+
+})
+
+
+app.frame('/randomRecommendation', async (c) => {
+ /* const {  frameData } = c;
+ const { fid } = frameData || {} */
+
+ const fid = 192336
+
+
+  if (typeof fid !== 'number' || fid === null) {
+    return c.res({
+      image: `/Frame_6_error.png`,
+      imageAspectRatio: '1.91:1',
+      intents: [<Button.Reset>Try again</Button.Reset>],
+    });
+  }
+  let delegates: suggestionResponseDTO 
+
+  try {
+    const delegateApiURL = new URL(`${process.env.DELEGATE_API_URL}/get_suggested_delegates`);
+    delegateApiURL.searchParams.append('fid', fid.toString());
+
+    const response = await fetch(delegateApiURL.toString(), {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    delegates = await response.json();
+
+} catch (error) {
+  console.error('Error fetching delegate data:', error);
+  return c.res({
+    image: `/Frame_6_error.png`,
+    imageAspectRatio: '1.91:1',
+    intents: [<Button.Reset>Try again</Button.Reset>],
+  });
+}
+if (delegates.length === 0) {
+  return c.res({
+    image: `/Frame_8_no_followers.png`,
+    imageAspectRatio: '1.91:1',
+    intents: [<Button.Reset>Try again</Button.Reset>],
+  });
+}
+
+const intents = getIntents(delegates);
+intents.push(<Button.Reset>Reset</Button.Reset>);
+
+return c.res({
+image: (  
+<div
+  style={{
+    display: 'flex',
+    background: '#f6f6f6',
+    alignItems: 'center',
+    position: 'relative',
+  }}
+> 
+  <img width="1200" height="630" alt="background" src={`/Frame_7_random_delegates.png`} />
   <div
     style={{
       display: 'flex',
@@ -319,17 +461,17 @@ image: (
       boxSizing: 'border-box',
       alignItems: 'center',
       lineHeight: 0.8,
-      padding: '0px 50px',
+      padding: '0px',
       overflow: 'hidden', 
       textOverflow: 'ellipsis',
       textAlign: 'center', 
-      top: '20%',
+      top: '30%',
       height: '80%',
     }}>      
     <div style={{
       display: 'flex',
-      flexDirection: 'row', // Alinea los ul en una fila
-      flexWrap: 'wrap', // Permite que los ul se envuelvan en múltiples líneas si es necesario
+      flexDirection: 'row', 
+      flexWrap: 'wrap', 
       width: '100%',
       maxWidth: '100%',
       justifyContent: 'center',
@@ -337,26 +479,25 @@ image: (
       {[0, 1, 2].map(colIndex => (
         <div key={colIndex} style={{
           display: 'flex',
-          flexDirection: 'column', // Coloca los items en una columna
-          width: '30%', // Ajusta el ancho para tres columnas
+          flexDirection: 'column', 
+          width: '30%', 
           boxSizing: 'border-box',
-          margin: '0 10px', // Espacio entre columnas
+          margin: '0 20px', 
         }}>
           {delegates
-            .filter((_, index) => index % 3 === colIndex) // Filtra los elementos para la columna actual
+            .filter((_, index) => index % 3 === colIndex) 
             .map((item, index) => (
               <div key={index} style={{
                 display: 'flex',
-                flexDirection: 'column', // Coloca address y count en una columna
+                flexDirection: 'column',
                 margin: '5px 0',
                 alignItems: 'center',
                 textOverflow: 'ellipsis',
+                color: colIndex === 1 ? '#E5383B' : '#36A4B4',
                 whiteSpace: 'nowrap',
-                height: 'auto', // Ajusta la altura según el contenido  
+                height: 'auto', 
               }}>                    
-                {truncateMiddle(item.address, 11)}     
-                <br/>
-                {item.count}
+                {truncateMiddle(item.address, 11)}
               </div>
             ))
           }
