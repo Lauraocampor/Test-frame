@@ -150,28 +150,30 @@ try {
             <div
               style={{
                 display: 'flex',
+                flexDirection: 'column',
                 position: 'absolute',
-                color: '#000000', 
-                fontSize: '75px', 
-                fontWeight: 'bold', 
-                lineHeight: '0.7', 
-                textTransform: 'uppercase', 
+                color: '#161B33',
+                fontSize: '65px',
+                textTransform: 'uppercase',
                 letterSpacing: '-0.030em',
-                whiteSpace: 'wrap',
-                overflow: 'hidden',
+                width: '100%',
+                maxWidth: '100%',
+                boxSizing: 'border-box',
+                alignItems: 'flex-start',
+                lineHeight: 0.8,
+                padding: '10px',
+                overflow: 'hidden', 
                 textOverflow: 'ellipsis',
-                width: '100%', 
-                margin: '20px', 
-                paddingLeft: '25px',
-                paddingRight: '25px',
-                left: '-20px', 
-                top: '20px', 
-                textAlign: 'center'
+                textAlign: 'center', 
+                top: '3%',
+                height: '30%',
+                lineClamp: 2,
+                whiteSpace: 'wrap'
               }}
             >            
-              {`Did `}
-              <span style={{ color: '#E5383B' }}>{delegateUpperCase}</span>
-              <span style={{ width: '100%', wordWrap: 'break-word', whiteSpace: 'normal'}}>vote in the most recent proposal?</span>
+            <div style={{display: 'flex', wordWrap: 'break-word', lineClamp: 2,  flexWrap: 'wrap', 
+      width: '100%',
+      maxWidth: '100%', margin: '0 10px', justifyContent: 'center',}}>Did <div style={{display: 'flex', color: '#E5383B'}}>{delegateUpperCase}</div> vote in the most recent proposal?</div>
             </div>
           </div>
         ),
