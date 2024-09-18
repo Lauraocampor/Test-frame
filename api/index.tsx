@@ -257,7 +257,8 @@ app.castAction(
         c.actionData.fid
       }`,
     )
-    return c.res({ type: 'message', message: 'Action Succeeded' })
+    c.message({message: 'logged'})
+    return c.frame({ path: '/' })
   },
   { name: "Log This!", icon: "log" }
 )
