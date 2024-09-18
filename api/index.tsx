@@ -240,29 +240,32 @@ try {
       </div>
     ),
         intents: [
-          <Button.AddCastAction action="/log-this">
-            Share
-          </Button.AddCastAction>,
+          <Button.AddCastAction action="/share">
+        Add
+      </Button.AddCastAction>,,
           <Button.Reset>Reset</Button.Reset>
         ],
       })
 
 })
 
-app.castAction(
-  '/log-this',
+app.composerAction(
+  '/share',
   (c) => {
-    console.log(
-      `Cast Action to ${JSON.stringify(c.actionData.castId)} from ${
-        c.actionData.fid
-      }`,
-    )
-    c.message({message: 'logged'})
-    return c.frame({ path: '/' })
+    return c.res({
+      title: 'My Composer Action',
+      url: 'https://example.com' 
+    })
   },
-  { name: "Log This!", icon: "log" }
+  {
+    /* Name of the action – 14 characters max. */
+    name: 'Some Composer Action',
+    /* Description of the action – 20 characters max. */
+    description: 'Cool Composer Action',
+    icon: 'image',
+    imageUrl: 'https://frog.fm/logo-light.svg',
+  }
 )
-
 
 function getOrdinalSuffix(index: number): string {
   const suffixes = ["th", "st", "nd", "rd"];
