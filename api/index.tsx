@@ -131,7 +131,7 @@ try {
   const userDelegate = delegate.delegateInfo.warpcast
   const addressDelegate = truncateMiddle(delegate.delegateInfo.delegateAddress, 11)
 
-  const delegateData =  addressDelegate
+  const delegateData = userDelegate? userDelegate : addressDelegate
   const delegateUpperCase= delegateData.toUpperCase()
 
   /* BAD DELEGATE FRAME */
@@ -240,12 +240,34 @@ try {
       </div>
     ),
         intents: [
-          <Button.Link href='https://warpcast.com/lauraocampo'>Share</Button.Link>,
+          <Button.Link href='https://test-frame-nu.vercel.app/api/share'>Share</Button.Link>,
           <Button.Reset>Reset</Button.Reset>
         ],
       })
 
 })
+
+app.composerAction(
+  '/share',
+  
+  (c) => {
+    const { actionData } = c
+    const {  url} = actionData
+
+    return c.res({
+      title: 'My Composer Action',
+      url: `${url}`
+    })
+  },
+  {
+    /* Name of the action – 14 characters max. */
+    name: 'Some Composer Action',
+    /* Description of the action – 20 characters max. */
+    description: 'Cool Composer Action',
+    icon: 'image',
+    imageUrl: 'https://frog.fm/logo-light.svg',
+  }
+)
 
 function getOrdinalSuffix(index: number): string {
   const suffixes = ["th", "st", "nd", "rd"];
