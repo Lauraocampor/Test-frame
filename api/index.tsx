@@ -85,8 +85,7 @@ app.frame('/', async (c) => {
   })
 })
 
-
-
+/* NAME AND ADDRESS FUNCTIONS */
 function truncateMiddle (text: string, maxLength: number) : string{
   if (text.length <= maxLength) return text
   const start = Math.ceil((maxLength - 3) / 2)
@@ -94,11 +93,19 @@ function truncateMiddle (text: string, maxLength: number) : string{
   return text.slice(0, start) + '...' + text.slice(-end)
 }
 
-app.frame('/delegatesStats', async (c) => {
- const {  frameData } = c;
- const { fid } = frameData || {}
+function truncateWord(str: string, maxLength: number) {
+  if (str.length <= maxLength) {
+    return str;
+  }
+  
+  return str.slice(0, maxLength) + '...';
+}
 
- //const fid = 192336
+app.frame('/delegatesStats', async (c) => {
+/*  const {  frameData } = c;
+ const { fid } = frameData || {} */
+
+ const fid = 192336
 
  if (typeof fid !== 'number' || fid === null){
   return c.res({
@@ -137,60 +144,57 @@ app.frame('/delegatesStats', async (c) => {
     })
   }
 
-  const userDelegate = delegate.delegateInfo.warpcast
+  const userDelegate = truncateWord(delegate.delegateInfo.warpcast, 9)
   const addressDelegate = truncateMiddle(delegate.delegateInfo.delegateAddress, 11)
 
   const delegateData = userDelegate? userDelegate : addressDelegate
   const delegateUpperCase= delegateData.toUpperCase()
-
   /* BAD DELEGATE FRAME */
 
   if(!delegate.isGoodDelegate) {
 
     return c.res({
-        image: (
-          <div style={{
+      image: (
+        <div style={{
+          display: 'flex',
+          background: '#f6f6f6',
+          width: '100%',
+          height: '100%',
+          flexDirection: 'column',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+          position: 'relative'
+        }}>
+          {/* @ts-ignore */}
+          <img width="1200" height="630" alt="background" src={`/Frame_2.1_stats_dynamic.png`} style={{position: 'absolute', width: '100%', height: '100%', objectFit: 'cover'}} />
+          <div
+          style={{
             display: 'flex',
-            background: '#f6f6f6',
-            width: '100%',
-            height: '100%',
             flexDirection: 'column',
-            justifyContent: 'flex-end',
+            position: 'absolute',
+            color: '#161B33',
+            fontSize: '64px',
+            textTransform: 'uppercase',
+            letterSpacing: '-0.035em',
+            width: '100%',
+            maxWidth: '100%',
+            boxSizing: 'border-box',
+            margin: '10px',
             alignItems: 'center',
-            position: 'relative'
-          }}>
-            {/* @ts-ignore */}
-            <img width="1200" height="630" alt="background" src={`/Frame_2.1_stats_dynamic.png`} style={{position: 'absolute', width: '100%', height: '100%', objectFit: 'cover'}} />
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                position: 'absolute',
-                color: '#161B33',
-                fontSize: '65px',
-                textTransform: 'uppercase',
-                letterSpacing: '-0.030em',
-                width: '100%',
-                maxWidth: '100%',
-                boxSizing: 'border-box',
-                alignItems: 'flex-start',
-                lineHeight: 0.8,
-                padding: '10px',
-                overflow: 'hidden', 
-                textOverflow: 'ellipsis',
-                textAlign: 'center', 
-                top: '3%',
-                height: '30%',
-                lineClamp: 2,
-                whiteSpace: 'wrap'
-              }}
-            >            
-            <div style={{display: 'flex', wordWrap: 'break-word', lineClamp: 2,  flexWrap: 'wrap', 
-      width: '100%',
-      maxWidth: '100%', margin: '0 10px', justifyContent: 'center',}}>Did <div style={{display: 'flex', color: '#E5383B'}}>{delegateUpperCase}</div> vote in the most recent proposal?</div>
-            </div>
-          </div>
-        ),
+            lineHeight: 0.8,
+            padding: '1px 10px',
+            overflow: 'hidden', 
+            textOverflow: 'ellipsis',
+            textAlign: 'center', 
+            top: '3%',
+            height: '30%',
+            whiteSpace: 'wrap'
+          }}
+        >            
+        <div style={{display: 'flex', wordWrap: 'break-word',  flexWrap: 'wrap', width: '100%', margin: '0', padding: '0', justifyContent: 'center',}}>Did <div style={{display: 'flex', color: '#E5383B'}}>{delegateUpperCase}</div> vote in the most recent proposal?</div>
+        </div>
+        </div>
+      ),
         intents: [
           <Button action='/socialRecommendation'>People I follow</Button>,
           <Button action='/randomRecommendation'>Random</Button>,
@@ -225,26 +229,25 @@ app.frame('/delegatesStats', async (c) => {
             flexDirection: 'column',
             position: 'absolute',
             color: '#161B33',
-            fontSize: '65px',
+            fontSize: '64px',
             textTransform: 'uppercase',
-            letterSpacing: '-0.030em',
+            letterSpacing: '-0.035em',
             width: '100%',
             maxWidth: '100%',
             boxSizing: 'border-box',
-            alignItems: 'flex-start',
+            margin: '10px',
+            alignItems: 'center',
             lineHeight: 0.8,
-            padding: '10px',
+            padding: '1px 10px',
             overflow: 'hidden', 
             textOverflow: 'ellipsis',
             textAlign: 'center', 
             top: '3%',
             height: '30%',
-            lineClamp: 2,
             whiteSpace: 'wrap'
           }}
         >            
-        <div style={{display: 'flex', wordWrap: 'break-word', lineClamp: 2,  flexWrap: 'wrap', width: '100%',
-  maxWidth: '100%', margin: '0 10px', justifyContent: 'center',}}>Did <div style={{display: 'flex', color: '#E5383B'}}>{delegateUpperCase}</div> vote in the most recent proposal?</div>
+        <div style={{display: 'flex', wordWrap: 'break-word',  flexWrap: 'wrap', width: '100%', margin: '0', padding: '0', justifyContent: 'center',}}>Did <div style={{display: 'flex', color: '#E5383B'}}>{delegateUpperCase}</div> vote in the most recent proposal?</div>
         </div>
       </div>
     ),
@@ -258,6 +261,7 @@ app.frame('/delegatesStats', async (c) => {
 
 })
 
+/* BUTTON FUNCTIONS */
 function getOrdinalSuffix(index: number): string {
   const suffixes = ["th", "st", "nd", "rd"];
   const value = index % 100;
