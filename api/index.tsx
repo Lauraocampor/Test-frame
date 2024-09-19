@@ -242,30 +242,26 @@ try {
         intents: [
           <Button.AddCastAction action="/share">
         Add
-      </Button.AddCastAction>,,
+      </Button.AddCastAction>,
           <Button.Reset>Reset</Button.Reset>
         ],
       })
 
 })
 
-app.composerAction(
+app.castAction(
   '/share',
   (c) => {
-    return c.res({
-      title: 'My Composer Action',
-      url: 'https://example.com' 
-    })
+    console.log(
+      `Cast Action to ${JSON.stringify(c.actionData.castId)} from ${
+        c.actionData.fid
+      }`,
+    )
+    return c.frame({ path: '/' })
   },
-  {
-    /* Name of the action – 14 characters max. */
-    name: 'Some Composer Action',
-    /* Description of the action – 20 characters max. */
-    description: 'Cool Composer Action',
-    icon: 'image',
-    imageUrl: 'https://frog.fm/logo-light.svg',
-  }
+  { name: "Log This!", icon: "log" }
 )
+
 
 function getOrdinalSuffix(index: number): string {
   const suffixes = ["th", "st", "nd", "rd"];
