@@ -311,6 +311,8 @@ if (delegates.length === 0) {
   });
 }
 
+delegates.length === 2
+
 const intents = getIntents(delegates);
 intents.push(<Button.Reset>Reset</Button.Reset>);
 
