@@ -229,25 +229,26 @@ app.frame('/delegatesStats', async (c) => {
             flexDirection: 'column',
             position: 'absolute',
             color: '#161B33',
-            fontSize: '64px',
+            fontSize: '65px',
             textTransform: 'uppercase',
-            letterSpacing: '-0.035em',
+            letterSpacing: '-0.030em',
             width: '100%',
             maxWidth: '100%',
             boxSizing: 'border-box',
-            margin: '10px',
-            alignItems: 'center',
+            alignItems: 'flex-start',
             lineHeight: 0.8,
-            padding: '1px 10px',
+            padding: '10px',
             overflow: 'hidden', 
             textOverflow: 'ellipsis',
             textAlign: 'center', 
             top: '3%',
             height: '30%',
+            lineClamp: 2,
             whiteSpace: 'wrap'
           }}
         >            
-        <div style={{display: 'flex', wordWrap: 'break-word',  flexWrap: 'wrap', width: '100%', margin: '0', padding: '0', justifyContent: 'center',}}>Did <div style={{display: 'flex', color: '#E5383B'}}>{delegateUpperCase}</div> vote in the most recent proposal?</div>
+        <div style={{display: 'flex', wordWrap: 'break-word', lineClamp: 2,  flexWrap: 'wrap', width: '100%',
+  maxWidth: '100%', margin: '0 10px', justifyContent: 'center',}}>Did <div style={{display: 'flex', color: '#E5383B'}}>{delegateUpperCase}</div> vote in the most recent proposal?</div>
         </div>
       </div>
     ),
@@ -258,6 +259,7 @@ app.frame('/delegatesStats', async (c) => {
           <Button.Reset>Reset</Button.Reset>
         ],
       })
+
 
 })
 
