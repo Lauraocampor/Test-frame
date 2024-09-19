@@ -144,7 +144,7 @@ app.frame('/delegatesStats', async (c) => {
     })
   }
 
-  const userDelegate = truncateWord(delegate.delegateInfo.warpcast, 9)
+  const userDelegate =delegate.delegateInfo.warpcast
   const addressDelegate = truncateMiddle(delegate.delegateInfo.delegateAddress, 11)
 
   const delegateData = userDelegate? userDelegate : addressDelegate
