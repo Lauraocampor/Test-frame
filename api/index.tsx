@@ -293,6 +293,8 @@ app.frame('/socialRecommendation', async (c) => {
 
     delegates = await response.json();
 
+    console.log(delegates)
+
 } catch (error) {
   console.error('Error fetching delegate data:', error);
   return c.res({
@@ -312,6 +314,145 @@ if (delegates.length === 0) {
 const intents = getIntents(delegates);
 intents.push(<Button.Reset>Reset</Button.Reset>);
 
+/* ONE DELEGATE FRAME */
+if (delegates.length === 1) {
+  return c.res({
+    image: (  
+<div
+  style={{
+    display: 'flex',
+    background: '#f6f6f6',
+    alignItems: 'center',
+    position: 'relative',
+  }}
+> 
+  <img width="1200" height="630" alt="background" src={`/Frame_3_social.png`} />
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      position: 'absolute',
+      color: '#161B33',
+      fontSize: '70px',
+      textTransform: 'uppercase',
+      letterSpacing: '-0.030em',
+      width: '100%',
+      lineHeight: 1.1,
+      boxSizing: 'border-box',
+      alignItems: 'center',
+      padding: '0px',
+      overflow: 'hidden', 
+      textOverflow: 'ellipsis',
+      textAlign: 'center', 
+      top: '18%',
+      height: '80%',
+    }}>      
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      width: '100%',
+      maxWidth: '600px',
+      justifyContent: 'center',
+      margin: '0 auto',
+    }}>
+      {delegates.map((item, index) => (
+        <div key={index} style={{
+          display: 'flex',
+          flexDirection: 'column',
+          margin: '5px 0',
+          alignItems: 'center',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          color: '#36A4B4',
+          height: 'auto',
+        }}>                    
+          {truncateMiddle(item.address, 11)}
+          <br/>
+          {item.count}
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+      ),
+  });
+}
+/* TWO DELEGATES FRAME */
+if (delegates.length === 2) {
+  return c.res({
+    image: (  
+<div
+  style={{
+    display: 'flex',
+    background: '#f6f6f6',
+    alignItems: 'center',
+    position: 'relative',
+  }}
+> 
+  <img width="1200" height="630" alt="background" src={`/Frame_3_social.png`} />
+  <div
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      position: 'absolute',
+      color: '#161B33',
+      fontSize: '70px',
+      textTransform: 'uppercase',
+      letterSpacing: '-0.030em',
+      width: '100%',
+      lineHeight: 1.1,
+      boxSizing: 'border-box',
+      alignItems: 'center',
+      padding: '0px',
+      overflow: 'hidden', 
+      textOverflow: 'ellipsis',
+      textAlign: 'center', 
+      top: '18%',
+      height: '80%',
+    }}>      
+    <div style={{
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      width: '100%',
+    }}>
+      {[0, 1].map(colIndex => (
+        <div key={colIndex} style={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '45%', // Ajusta el ancho para dos columnas
+          margin: '0 20px',
+        }}>
+          {delegates
+            .filter((_, index) => index % 2 === colIndex)
+            .map((item, index) => (
+              <div key={index} style={{
+                display: 'flex',
+                flexDirection: 'column',
+                margin: '5px 0',
+                alignItems: 'center',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                color: colIndex === 1 ? '#E5383B' : '#36A4B4',
+                height: 'auto',
+              }}>                    
+                {truncateMiddle(item.address, 11)}
+                <br/>
+                {item.count}
+              </div>
+            ))
+          }
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+      ),
+  });
+}
+
+/* THREE DELEGATES FRAME */
 return c.res({
 image: (  
 <div
