@@ -293,8 +293,6 @@ app.frame('/socialRecommendation', async (c) => {
 
     delegates = await response.json();
 
-    console.log(delegates)
-
 } catch (error) {
   console.error('Error fetching delegate data:', error);
   return c.res({
@@ -311,7 +309,7 @@ if (delegates.length === 0) {
   });
 }
 
-delegates.length === 2
+delegates.length = 2
 
 const intents = getIntents(delegates);
 intents.push(<Button.Reset>Reset</Button.Reset>);
@@ -378,8 +376,10 @@ if (delegates.length === 1) {
   </div>
 </div>
       ),
+intents,
   });
 }
+
 /* TWO DELEGATES FRAME */
 if (delegates.length === 2) {
   return c.res({
@@ -451,6 +451,7 @@ if (delegates.length === 2) {
   </div>
 </div>
       ),
+intents,
   });
 }
 
