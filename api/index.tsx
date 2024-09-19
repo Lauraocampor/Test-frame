@@ -50,10 +50,10 @@ function truncateMiddle (text: string, maxLength: number) : string{
 }
 
 app.frame('/delegatesStats', async (c) => {
- /* const {  frameData } = c;
- const { fid } = frameData || {} */
+ const {  frameData } = c;
+ const { fid } = frameData || {}
 
- const fid = 192336
+ //const fid = 192336
 
  if (typeof fid !== 'number' || fid === null){
   return c.res({
@@ -240,28 +240,14 @@ try {
       </div>
     ),
         intents: [
-          <Button.AddCastAction action="/share">
-        Add
-      </Button.AddCastAction>,
+          <Button.Link href="/share">
+        share
+      </Button.Link>,
           <Button.Reset>Reset</Button.Reset>
         ],
       })
 
 })
-
-app.castAction(
-  '/share',
-  (c) => {
-    console.log(
-      `Cast Action to ${JSON.stringify(c.actionData.castId)} from ${
-        c.actionData.fid
-      }`,
-    )
-    return c.frame({ path: '/' })
-  },
-  { name: "Log This!", icon: "log" }
-)
-
 
 function getOrdinalSuffix(index: number): string {
   const suffixes = ["th", "st", "nd", "rd"];
@@ -277,10 +263,10 @@ function getIntents(delegates: addressCount[]) : FrameIntent[]{
 }
 
 app.frame('/socialRecommendation', async (c) => {
- /* const {  frameData } = c;
- const { fid } = frameData || {} */
+ const {  frameData } = c;
+ const { fid } = frameData || {}
 
- const fid = 192336
+ //const fid = 192336
 
 
   if (typeof fid !== 'number' || fid === null) {
@@ -405,10 +391,10 @@ intents,
 
 
 app.frame('/randomRecommendation', async (c) => {
- /* const {  frameData } = c;
- const { fid } = frameData || {} */
+ const {  frameData } = c;
+ const { fid } = frameData || {}
 
- const fid = 192336
+ //const fid = 192336
 
 
   if (typeof fid !== 'number' || fid === null) {
