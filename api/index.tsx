@@ -154,7 +154,7 @@ app.frame('/delegatesStats', async (c) => {
   const delegateUpperCase= delegateData.toUpperCase()
 
 
-  delegate.isGoodDelegate = false
+  //delegate.isGoodDelegate = false
 
   /* BAD DELEGATE FRAME */
 
@@ -259,7 +259,7 @@ app.frame('/delegatesStats', async (c) => {
         </div>
       ),
         intents: [
-          <Button.Link href='https://warpcast.com/lauraocampo'>Share</Button.Link>,
+          <Button.Link href='https://warpcast.com/~/compose?text=Hello%20world!&embeds[]=https://farcaster.xyz'>Share</Button.Link>,
           <Button.Reset>Reset</Button.Reset>
         ],
       })
