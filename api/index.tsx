@@ -32,6 +32,27 @@ export const app = new Frog({
   }
 })
 
+/* API CALL GET_STATS */
+export async function getStats(fid: number) : Promise<DelegatesResponseDTO>{
+    
+  const delegateApiURL = new URL(`${process.env.DELEGATE_API_URL}/get_stats`)
+
+  delegateApiURL.searchParams.append('fid', fid.toString());
+
+  const response = await fetch(delegateApiURL, {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json'
+      }
+  })
+
+  if (!response.ok){
+      throw new Error(`Error get delegate info for fid ${fid}`)
+  }
+  let data : DelegatesResponseDTO = await response.json();
+  return data
+}
+
 app.frame('/', (c) => {
   return c.res({
     image: `/Frame_1_start_op.png`,
@@ -42,6 +63,7 @@ app.frame('/', (c) => {
   })
 })
 
+/* ADDRESS AND USERNAME FUNCTIONS */
 function truncateMiddle (text: string, maxLength: number) : string{
   if (text.length <= maxLength) return text
   const start = Math.ceil((maxLength - 3) / 2)
@@ -74,42 +96,8 @@ app.frame('/delegatesStats', async (c) => {
   })
 }
 
-let delegate: DelegatesResponseDTO;
+  const delegate = await getStats(fid);
 
-try {
-
-  const delegateApiURL = new URL(`${process.env.DELEGATE_API_URL}/get_stats`);
-
-  if (fid === undefined) {
-    throw new Error('FID is undefined');
-  }
-
-  delegateApiURL.searchParams.append('fid', fid.toString());
-
-  const response = await fetch(delegateApiURL.toString(), {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-
-  delegate = await response.json();
-
-} catch (e) {
-  console.error('Error fetching delegate data:', e);
-
-  return c.res({
-    image: `/Frame_6_error.png`,
-    imageAspectRatio: '1.91:1',
-    intents: [
-      <Button.Reset>Try again</Button.Reset>,
-    ],
-  });
-}
 
   /* NO VERIFIED ADDRESS FRAME */
 
@@ -232,19 +220,18 @@ try {
               width: '100%',
               maxWidth: '100%',
               boxSizing: 'border-box',
-              alignItems: 'flex-start',
+              alignItems: 'center',
               lineHeight: 0.8,
               padding: '10px',
               overflow: 'hidden', 
               textOverflow: 'ellipsis',
               textAlign: 'center', 
-              top: '3%',
+              top: '8%',
               height: '30%',
-              lineClamp: 2,
               whiteSpace: 'wrap'
             }}
           >            
-          <div style={{display: 'flex', wordWrap: 'break-word', lineClamp: 2,  flexWrap: 'wrap', width: '100%',
+          <div style={{display: 'flex', wordWrap: 'break-word', flexWrap: 'wrap', width: '100%',
     maxWidth: '100%', margin: '0 10px', justifyContent: 'center',}}>Did <div style={{display: 'flex', color: '#E5383B'}}>{delegateUpperCase}</div> vote in the most recent proposal?</div>
           </div>
         </div>
@@ -311,7 +298,7 @@ app.frame('/socialRecommendation', async (c) => {
   }
 
   /* TEST FRAMES */
-  delegates.length = 2
+  //delegates.length = 2
 
   if (delegates.length === 0) {
     return c.res({

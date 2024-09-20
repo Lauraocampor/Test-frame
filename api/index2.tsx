@@ -50,7 +50,8 @@ export async function getStats(fid: number) : Promise<DelegatesResponseDTO>{
   if (!response.ok){
       throw new Error(`Error get delegate info for fid ${fid}`)
   }
-  return await response.json() as DelegatesResponseDTO;
+  let data : DelegatesResponseDTO = await response.json();
+  return data
 }
 
 /* API CALL GET_SUGGESTED_DELEGATES */
