@@ -25,7 +25,7 @@ export const app = new Frog<{ State: State }>({
   basePath: '/api',
   hub: neynar({ apiKey: 'NEYNAR_FROG_FM' }),
   title: 'Delegates Frame',
-  verify: 'silent',
+  /* verify: 'silent', */
   imageOptions: {
     fonts: [
       {
