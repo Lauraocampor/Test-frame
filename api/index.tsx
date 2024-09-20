@@ -15,12 +15,17 @@ import { addressCount, suggestionResponseDTO } from './service/suggestionRespons
 // runtime: 'edge',
 // }
 
-export const app = new Frog({
+type State = {
+  delegate: DelegatesResponseDTO,
+  delegates: suggestionResponseDTO
+}
+
+export const app = new Frog<{ State: State }>({
   assetsPath: '/',
   basePath: '/api',
   hub: neynar({ apiKey: 'NEYNAR_FROG_FM' }),
   title: 'Delegates Frame',
-/*   verify: 'silent', */
+  verify: 'silent',
   imageOptions: {
     fonts: [
       {
@@ -75,7 +80,22 @@ export async function getSuggestedDelegates(fid: number): Promise<suggestionResp
   return data
 }
 
-app.frame('/', (c) => {
+app.frame('/', async (c) => {
+
+  const {  frameData, deriveState} = c;
+  const { fid } = frameData || {}
+
+  if (fid !== undefined){
+    const state = await deriveState(async previousState =>{
+      previousState.delegate = await getStats(fid)
+      previousState.delegates = await getSuggestedDelegates(fid)
+    })
+    console.log('state', state)
+  } else {
+    console.error('fid is undefined');
+  }
+
+
   return c.res({
     image: `/Frame_1_start_op.png`,
     imageAspectRatio: '1.91:1',
@@ -103,10 +123,10 @@ function truncateWord(str: string, maxLength: number) {
 
 
 app.frame('/delegatesStats', async (c) => {
- /* const {  frameData } = c;
- const { fid } = frameData || {} */
+ const {  frameData, previousState } = c;
+ const { fid } = frameData || {}
 
- const fid = 192336
+ //const fid = 192336
 
  if (typeof fid !== 'number' || fid === null){
   return c.res({
@@ -117,8 +137,11 @@ app.frame('/delegatesStats', async (c) => {
     ],
   })
 }
+  const delegate = previousState.delegate
 
-  const delegate = await getStats(fid);
+  console.log(delegate, 'delegate')
+  //const delegate = await getStats(fid);
+
 
 
   /* NO VERIFIED ADDRESS FRAME */
