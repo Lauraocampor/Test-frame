@@ -103,8 +103,9 @@ function truncateWord(str: string, maxLength: number) {
 
 
 app.frame('/delegatesStats', async (c) => {
- /* const {  frameData } = c;
- const { fid } = frameData || {} */
+ //const {  frameData } = c;
+ //const { fid } = frameData || {}
+
 
  const fid = 192336
 
@@ -259,7 +260,7 @@ app.frame('/delegatesStats', async (c) => {
         </div>
       ),
         intents: [
-          <Button.Link href='https://warpcast.com/~/compose?text=Hello%20world!&embeds[]=https://test-frame-nu.vercel.app/api'>Share</Button.Link>,
+          <Button.Link href='https://warpcast.com/~/compose?text=Hello%20world!&embeds[]=https://test-frame-nu.vercel.app/api/delegatesStats'>Share</Button.Link>,
           <Button.Reset>Reset</Button.Reset>
         ],
       })
