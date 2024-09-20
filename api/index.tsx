@@ -53,6 +53,28 @@ export async function getStats(fid: number) : Promise<DelegatesResponseDTO>{
   return data
 }
 
+/* API CALL GET_SUGGESTED_DELEGATES */
+export async function getSuggestedDelegates(fid: number): Promise<suggestionResponseDTO> {
+
+  const delegateApiURL = new URL(`${process.env.DELEGATE_API_URL}/get_suggested_delegates`);
+
+  delegateApiURL.searchParams.append('fid', fid.toString());
+
+
+  const response = await fetch(delegateApiURL, {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json'
+      }
+  })
+
+  if (!response.ok){
+      throw new Error(`Error get delegate info for fid ${fid}`)
+  }
+  let data : suggestionResponseDTO = await response.json()
+  return data
+}
+
 app.frame('/', (c) => {
   return c.res({
     image: `/Frame_1_start_op.png`,
@@ -244,6 +266,7 @@ app.frame('/delegatesStats', async (c) => {
 
 })
 
+/* BUTTON FUNCTIONS */
 function getOrdinalSuffix(index: number): string {
   const suffixes = ["th", "st", "nd", "rd"];
   const value = index % 100;
@@ -261,7 +284,7 @@ app.frame('/socialRecommendation', async (c) => {
   /*  const {  frameData } = c;
    const { fid } = frameData || {} */
   
-   const fid = 192336
+  const fid = 192336
   
   
     if (typeof fid !== 'number' || fid === null) {
@@ -271,31 +294,9 @@ app.frame('/socialRecommendation', async (c) => {
         intents: [<Button.Reset>Try again</Button.Reset>],
       });
     }
-    let delegates: suggestionResponseDTO 
   
-    try {
-      const delegateApiURL = new URL(`${process.env.DELEGATE_API_URL}/get_suggested_delegates`);
-      delegateApiURL.searchParams.append('fid', fid.toString());
+  const delegates = await getSuggestedDelegates(fid);
   
-      const response = await fetch(delegateApiURL.toString(), {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-  
-      delegates = await response.json();
-  
-  } catch (error) {
-    console.error('Error fetching delegate data:', error);
-    return c.res({
-      image: `/Frame_6_error.png`,
-      imageAspectRatio: '1.91:1',
-      intents: [<Button.Reset>Try again</Button.Reset>],
-    });
-  }
 
   /* TEST FRAMES */
   //delegates.length = 2
@@ -544,31 +545,10 @@ app.frame('/randomRecommendation', async (c) => {
       intents: [<Button.Reset>Try again</Button.Reset>],
     });
   }
-  let delegates: suggestionResponseDTO 
 
-  try {
-    const delegateApiURL = new URL(`${process.env.DELEGATE_API_URL}/get_suggested_delegates`);
-    delegateApiURL.searchParams.append('fid', fid.toString());
+  const delegates = await getSuggestedDelegates(fid);
 
-    const response = await fetch(delegateApiURL.toString(), {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    delegates = await response.json();
-
-} catch (error) {
-  console.error('Error fetching delegate data:', error);
-  return c.res({
-    image: `/Frame_6_error.png`,
-    imageAspectRatio: '1.91:1',
-    intents: [<Button.Reset>Try again</Button.Reset>],
-  });
-}
 if (delegates.length === 0) {
   return c.res({
     image: `/Frame_8_no_followers.png`,
