@@ -15,12 +15,17 @@ import { addressCount, suggestionResponseDTO } from './service/suggestionRespons
 // runtime: 'edge',
 // }
 
-export const app = new Frog({
+type State = {
+  delegate: DelegatesResponseDTO,
+  delegates: suggestionResponseDTO
+}
+
+export const app = new Frog<{ State: State }>({
   assetsPath: '/',
   basePath: '/api',
   hub: neynar({ apiKey: 'NEYNAR_FROG_FM' }),
   title: 'Delegates Frame',
-/*   verify: 'silent', */
+  verify: 'silent',
   imageOptions: {
     fonts: [
       {
@@ -29,7 +34,22 @@ export const app = new Frog({
         source: 'google',
       }
     ]
-  }
+  },
+  initialState: { delegate: {
+    hasVerifiedAddress: false,
+    hasDelegate: false,
+    isGoodDelegate: false,
+    delegateInfo: {
+      delegateAddress: '0x0000000000',
+      warpcast: ''
+    }
+  },
+  delegates: [{
+    address: '0x0000000000',
+    count: 0,
+    username: 'no_farcaster_name'}
+  ]
+}
 })
 
 /* API CALL GET_STATS */
@@ -75,12 +95,12 @@ export async function getSuggestedDelegates(fid: number): Promise<suggestionResp
   return data
 }
 
-app.frame('/', (c) => {
+app.frame('/', async (c) => {
   return c.res({
     image: `/Frame_1_start_op.png`,
     imageAspectRatio: '1.91:1',
     intents: [
-      <Button action="/delegatesStats">View Stats</Button>
+      <Button value="view" action="/delegatesStats">View Stats</Button>
     ],
   })
 })
@@ -103,23 +123,26 @@ function truncateWord(str: string, maxLength: number) {
 
 
 app.frame('/delegatesStats', async (c) => {
- /* const {  frameData } = c;
- const { fid } = frameData || {} */
-
- const fid = 192336
-
- if (typeof fid !== 'number' || fid === null){
-  return c.res({
-    image: `/Frame_6_error.png`,
-    imageAspectRatio: '1.91:1',
-    intents: [
-      <Button.Reset>Try again</Button.Reset>,
-    ],
+  const {  deriveState } = c;
+  //const { fid } = frameData || {}
+ 
+  const fid = 192336
+ 
+  if (typeof fid !== 'number' || fid === null){
+   return c.res({
+     image: `/Frame_6_error.png`,
+     imageAspectRatio: '1.91:1',
+     intents: [
+       <Button.Reset>Try again</Button.Reset>,
+     ],
+   })
+ }
+  const state = await deriveState(async previousState =>{
+      previousState.delegate = await getStats(fid)
+      previousState.delegates = await getSuggestedDelegates(fid)
   })
-}
-
-  const delegate = await getStats(fid);
-
+  
+  const delegate = state.delegate
 
   /* NO VERIFIED ADDRESS FRAME */
 
@@ -203,7 +226,7 @@ app.frame('/delegatesStats', async (c) => {
         </div>
       ),
         intents: [
-          <Button action='/socialRecommendation'>Social Graph</Button>,
+          <Button value='social' action='/socialRecommendation'>Social Graph</Button>,
           <Button action='/randomRecommendation'>Random</Button>,
           <Button.Reset>Reset</Button.Reset>
         ],
@@ -281,21 +304,23 @@ function getIntents(delegates: addressCount[]) : FrameIntent[]{
 }
 
 app.frame('/socialRecommendation', async (c) => {
-  /*  const {  frameData } = c;
-   const { fid } = frameData || {} */
-  
-  const fid = 192336
-  
-  
-    if (typeof fid !== 'number' || fid === null) {
-      return c.res({
-        image: `/Frame_6_error.png`,
-        imageAspectRatio: '1.91:1',
-        intents: [<Button.Reset>Try again</Button.Reset>],
-      });
-    }
-  
-  const delegates = await getSuggestedDelegates(fid);
+ /* const {  frameData } = c;
+ const { fid } = frameData || {} */
+
+ const { previousState } = c
+
+ const fid = 192336
+
+
+  if (typeof fid !== 'number' || fid === null) {
+    return c.res({
+      image: `/Frame_6_error.png`,
+      imageAspectRatio: '1.91:1',
+      intents: [<Button.Reset>Try again</Button.Reset>],
+    });
+  }
+
+  const delegates = previousState.delegates;
   
 
   /* TEST FRAMES */
@@ -535,6 +560,8 @@ app.frame('/randomRecommendation', async (c) => {
  /* const {  frameData } = c;
  const { fid } = frameData || {} */
 
+ const { previousState } = c
+
  const fid = 192336
 
 
@@ -546,7 +573,7 @@ app.frame('/randomRecommendation', async (c) => {
     });
   }
 
-  const delegates = await getSuggestedDelegates(fid);
+  const delegates = previousState.delegates;
 
 
 if (delegates.length === 0) {
