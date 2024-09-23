@@ -8,7 +8,8 @@ import { devtools } from 'frog/dev'
 import { serveStatic } from 'frog/serve-static'
 
 import { DelegatesResponseDTO } from './service/delegatesResponseDTO.js';
-import { addressCount, suggestionResponseDTO } from './service/suggestionResponseDTO.js';
+import { suggestedDelegates, suggestionResponseDTO } from './service/suggestionResponseDTO.js';
+import { randomDelegates, randomResponseDTO } from './service/randomResponseDTO.js';
 
 // Uncomment to use Edge Runtime.
 // export const config = {
@@ -17,7 +18,8 @@ import { addressCount, suggestionResponseDTO } from './service/suggestionRespons
 
 type State = {
   delegate: DelegatesResponseDTO,
-  delegates: suggestionResponseDTO
+  delegates: suggestionResponseDTO,
+  delegatesRandom: randomResponseDTO
 }
 
 export const app = new Frog<{ State: State }>({
@@ -48,7 +50,11 @@ export const app = new Frog<{ State: State }>({
     address: '0x0000000000',
     count: 0,
     username: 'no_farcaster_name'}
-  ]
+  ],
+  delegatesRandom: [{
+    address: '0x0000000000',
+    username: 'no_farcaster_name'
+  }]
 }
 })
 
@@ -92,6 +98,28 @@ export async function getSuggestedDelegates(fid: number): Promise<suggestionResp
       throw new Error(`Error get delegate info for fid ${fid}`)
   }
   let data : suggestionResponseDTO = await response.json()
+  return data
+}
+
+/* API CALL GET_RANDOM_DELEGATES */
+export async function getRandomDelegates(fid: number): Promise<randomResponseDTO> {
+
+  const delegateApiURL = new URL(`${process.env.DELEGATE_API_URL}/get_random_delegates`);
+
+  delegateApiURL.searchParams.append('fid', fid.toString());
+
+
+  const response = await fetch(delegateApiURL, {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json'
+      }
+  })
+
+  if (!response.ok){
+      throw new Error(`Error get delegate info for fid ${fid}`)
+  }
+  let data : randomResponseDTO = await response.json()
   return data
 }
 
@@ -140,6 +168,7 @@ app.frame('/delegatesStats', async (c) => {
   const state = await deriveState(async previousState =>{
       previousState.delegate = await getStats(fid)
       previousState.delegates = await getSuggestedDelegates(fid)
+      previousState.delegatesRandom = await getRandomDelegates(fid)
   })
   
   const delegate = state.delegate
@@ -296,8 +325,15 @@ function getOrdinalSuffix(index: number): string {
   return suffixes[(value - 20) % 10] || suffixes[value] || suffixes[0];
 }
 
-function getIntents(delegates: addressCount[]) : FrameIntent[]{
-  return delegates.map((delegate: addressCount, index: number) => {
+function getIntentsSuggested(delegates: suggestedDelegates[]) : FrameIntent[]{
+  return delegates.map((delegate: suggestedDelegates, index: number) => {
+    const position = index+1
+    return <Button.Link href={`https://vote.optimism.io/delegates/${delegate.address}`}>{`${position}${getOrdinalSuffix(position)} Delegate`}</Button.Link>
+  })
+}
+
+function getIntentsRandom(delegates: randomDelegates[]) : FrameIntent[]{
+  return delegates.map((delegate: randomDelegates, index: number) => {
     const position = index+1
     return <Button.Link href={`https://vote.optimism.io/delegates/${delegate.address}`}>{`${position}${getOrdinalSuffix(position)} Delegate`}</Button.Link>
   })
@@ -334,7 +370,7 @@ app.frame('/socialRecommendation', async (c) => {
     });
   }
   
-  const intents = getIntents(delegates);
+  const intents = getIntentsSuggested(delegates);
   intents.push(<Button.Reset>Reset</Button.Reset>);
   
   /* ONE DELEGATE FRAME */
@@ -573,7 +609,7 @@ app.frame('/randomRecommendation', async (c) => {
     });
   }
 
-  const delegates = previousState.delegates;
+  const delegates = previousState.delegatesRandom;
 
 
 if (delegates.length === 0) {
@@ -584,7 +620,7 @@ if (delegates.length === 0) {
   });
 }
 
-const intents = getIntents(delegates);
+const intents = getIntentsRandom(delegates);
 intents.push(<Button.Reset>Reset</Button.Reset>);
 
 return c.res({
