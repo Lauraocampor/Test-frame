@@ -19,7 +19,8 @@ import { randomDelegates, randomResponseDTO } from './service/randomResponseDTO.
 type State = {
   delegate: DelegatesResponseDTO,
   delegates: suggestionResponseDTO,
-  delegatesRandom: randomResponseDTO
+  delegatesRandom: randomDelegates[],
+  fid: number
 }
 
 export const app = new Frog<{ State: State }>({
@@ -27,7 +28,7 @@ export const app = new Frog<{ State: State }>({
   basePath: '/api',
   hub: neynar({ apiKey: 'NEYNAR_FROG_FM' }),
   title: 'Delegates Frame',
-  verify: 'silent',
+/*   verify: 'silent', */
   imageOptions: {
     fonts: [
       {
@@ -37,25 +38,20 @@ export const app = new Frog<{ State: State }>({
       }
     ]
   },
-  initialState: { delegate: {
-    hasVerifiedAddress: false,
-    hasDelegate: false,
-    isGoodDelegate: false,
-    delegateInfo: {
-      delegateAddress: '0x0000000000',
-      warpcast: ''
-    }
-  },
-  delegates: [{
-    address: '0x0000000000',
-    count: 0,
-    username: 'no_farcaster_name'}
-  ],
-  delegatesRandom: [{
-    address: '0x0000000000',
-    username: 'no_farcaster_name'
-  }]
-}
+  initialState: { 
+    delegate: {
+      hasVerifiedAddress: false,
+      hasDelegate: false,
+      isGoodDelegate: false,
+      delegateInfo: {
+        delegateAddress: '0x0000000000',
+        warpcast: ''
+      }
+    },
+    delegates: [],
+    delegatesRandom: [],
+    fid: 0
+  }
 })
 
 /* API CALL GET_STATS */
@@ -73,7 +69,7 @@ export async function getStats(fid: number) : Promise<DelegatesResponseDTO>{
   })
 
   if (!response.ok){
-      throw new Error(`Error get delegate info for fid ${fid}`)
+    console.log(`Error get delegate info for fid ${fid}`)
   }
   let data : DelegatesResponseDTO = await response.json();
   return data
@@ -86,7 +82,6 @@ export async function getSuggestedDelegates(fid: number): Promise<suggestionResp
 
   delegateApiURL.searchParams.append('fid', fid.toString());
 
-
   const response = await fetch(delegateApiURL, {
       method: 'GET',
       headers: {
@@ -95,7 +90,7 @@ export async function getSuggestedDelegates(fid: number): Promise<suggestionResp
   })
 
   if (!response.ok){
-      throw new Error(`Error get delegate info for fid ${fid}`)
+    console.log(`Error getSuggestedDelegates for fid ${fid}`)
   }
   let data : suggestionResponseDTO = await response.json()
   return data
@@ -108,7 +103,6 @@ export async function getRandomDelegates(fid: number): Promise<randomResponseDTO
 
   delegateApiURL.searchParams.append('fid', fid.toString());
 
-
   const response = await fetch(delegateApiURL, {
       method: 'GET',
       headers: {
@@ -117,18 +111,42 @@ export async function getRandomDelegates(fid: number): Promise<randomResponseDTO
   })
 
   if (!response.ok){
-      throw new Error(`Error get delegate info for fid ${fid}`)
+    console.log(`Error getRandomDelegates for fid ${fid}`)
   }
   let data : randomResponseDTO = await response.json()
   return data
 }
 
 app.frame('/', async (c) => {
+  const {  previousState } = c;
+  
+  //const { fid } = frameData || {}
+
+  const fid = 192336
+
+  previousState.fid = fid
+
+  getStats(fid).then((data) => {
+    previousState.delegate = data;
+  });
+  
+  if(previousState.delegates.length === 0){
+      getSuggestedDelegates(fid).then((data) => {
+      previousState.delegates = data;
+    });
+  }
+
+  if(previousState.delegatesRandom.length === 0){
+    getRandomDelegates(fid).then((data) => {
+      previousState.delegatesRandom = data;
+    });
+  }
+
   return c.res({
     image: `/Frame_1_start_op.png`,
     imageAspectRatio: '1.91:1',
     intents: [
-      <Button value="view" action="/delegatesStats">View Stats</Button>
+      <Button action="/delegatesStats">View Stats</Button>
     ],
   })
 })
@@ -151,38 +169,32 @@ function truncateWord(str: string, maxLength: number) {
 
 
 app.frame('/delegatesStats', async (c) => {
-  const {  deriveState } = c;
-  //const { fid } = frameData || {}
- 
-  const fid = 192336
- 
-  if (typeof fid !== 'number' || fid === null){
-   return c.res({
-     image: `/Frame_6_error.png`,
-     imageAspectRatio: '1.91:1',
-     intents: [
-       <Button.Reset>Try again</Button.Reset>,
-     ],
-   })
- }
-  const state = await deriveState(async previousState =>{
-      previousState.delegate = await getStats(fid)
-      previousState.delegates = await getSuggestedDelegates(fid)
-      previousState.delegatesRandom = await getRandomDelegates(fid)
-  })
-  
-  const delegate = state.delegate
+const {  previousState } = c;
+
+ const fid = previousState.fid
+
+ if (typeof fid !== 'number' || fid === null){
+    return c.res({
+      image: `/Frame_6_error.png`,
+      imageAspectRatio: '1.91:1',
+      intents: [
+        <Button.Reset>Try again</Button.Reset>,
+      ],
+    })
+  }
+
+  const delegate = previousState.delegate;
 
   /* NO VERIFIED ADDRESS FRAME */
 
   if (!delegate.hasVerifiedAddress){
-    return c.res({
-      image: `/Frame_4_not_verified.png`,
-      imageAspectRatio: '1.91:1',
-      intents: [
-          <Button.Reset>Try again</Button.Reset>,
-      ],
-  })
+      return c.res({
+        image: `/Frame_4_not_verified.png`,
+        imageAspectRatio: '1.91:1',
+        intents: [
+            <Button.Reset>Try again</Button.Reset>,
+        ],
+    })
   }
   
   /* NO DELEGATE FRAME */
@@ -209,9 +221,7 @@ app.frame('/delegatesStats', async (c) => {
   delegate.isGoodDelegate = false
 
   /* BAD DELEGATE FRAME */
-
   if(!delegate.isGoodDelegate) {
-
     return c.res({
       image: (
         <div style={{
@@ -255,7 +265,7 @@ app.frame('/delegatesStats', async (c) => {
         </div>
       ),
         intents: [
-          <Button value='social' action='/socialRecommendation'>Social Graph</Button>,
+          <Button action='/socialRecommendation'>Social Graph</Button>,
           <Button action='/randomRecommendation'>Random</Button>,
           <Button.Reset>Reset</Button.Reset>
         ],
@@ -340,14 +350,10 @@ function getIntentsRandom(delegates: randomDelegates[]) : FrameIntent[]{
 }
 
 app.frame('/socialRecommendation', async (c) => {
- /* const {  frameData } = c;
- const { fid } = frameData || {} */
+  const {  previousState } = c;
 
- const { previousState } = c
-
- const fid = 192336
-
-
+  const fid = previousState.fid;  
+  
   if (typeof fid !== 'number' || fid === null) {
     return c.res({
       image: `/Frame_6_error.png`,
@@ -355,19 +361,91 @@ app.frame('/socialRecommendation', async (c) => {
       intents: [<Button.Reset>Try again</Button.Reset>],
     });
   }
-
+  
   const delegates = previousState.delegates;
   
-
   /* TEST FRAMES */
-  //delegates.length = 2
+  delegates.length = 0
 
   if (delegates.length === 0) {
+    const delegates = previousState.delegatesRandom;
+    
+    const intents = getIntentsRandom(delegates);
+    intents.push(<Button.Reset>Reset</Button.Reset>);
+    
     return c.res({
-      image: `/Frame_8_no_followers.png`,
-      imageAspectRatio: '1.91:1',
-      intents: [<Button.Reset>Try again</Button.Reset>],
+    image: (  
+    <div
+      style={{
+        display: 'flex',
+        background: '#f6f6f6',
+        alignItems: 'center',
+        position: 'relative',
+      }}
+    > 
+      <img width="1200" height="630" alt="background" src={`/Frame_8_no_followers.png`} />
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'absolute',
+          color: '#161B33',
+          fontSize: '65px',
+          textTransform: 'uppercase',
+          letterSpacing: '-0.030em',
+          width: '100%',
+          boxSizing: 'border-box',
+          alignItems: 'center',
+          lineHeight: 0.8,
+          padding: '0px',
+          overflow: 'hidden', 
+          textOverflow: 'ellipsis',
+          textAlign: 'center', 
+          top: '30%',
+          height: '80%',
+        }}>      
+        <div style={{
+          display: 'flex',
+          flexDirection: 'row', 
+          flexWrap: 'wrap', 
+          width: '100%',
+          maxWidth: '100%',
+          justifyContent: 'center',
+        }}>
+          {[0, 1, 2].map(colIndex => (
+            <div key={colIndex} style={{
+              display: 'flex',
+              flexDirection: 'column', 
+              width: '30%', 
+              boxSizing: 'border-box',
+              margin: '0 20px', 
+            }}>
+              {delegates
+                .filter((_, index) => index % 3 === colIndex) 
+                .map((item, index) => (
+                  <div key={index} style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    margin: '5px 0',
+                    alignItems: 'center',
+                    textOverflow: 'ellipsis',
+                    color: colIndex === 1 ? '#E5383B' : '#36A4B4',
+                    whiteSpace: 'nowrap',
+                    height: 'auto', 
+                  }}>                    
+                    { item.username === 'no_farcaster_name' ? truncateMiddle(item.address, 11) :  truncateWord(item.username, 12)}
+                  </div>
+                ))
+              }
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+    ),
+    intents,
     });
+    
   }
   
   const intents = getIntentsSuggested(delegates);
@@ -592,33 +670,29 @@ app.frame('/socialRecommendation', async (c) => {
 })
 
 
-app.frame('/randomRecommendation', async (c) => {
- /* const {  frameData } = c;
- const { fid } = frameData || {} */
+app.frame('/randomRecommendation', async (c) => {  
+const {  previousState } = c;
 
- const { previousState } = c
-
- const fid = 192336
+const fid = previousState.fid;
 
 
-  if (typeof fid !== 'number' || fid === null) {
-    return c.res({
-      image: `/Frame_6_error.png`,
-      imageAspectRatio: '1.91:1',
-      intents: [<Button.Reset>Try again</Button.Reset>],
-    });
-  }
+if (typeof fid !== 'number' || fid === null) {
+  return c.res({
+    image: `/Frame_6_error.png`,
+    imageAspectRatio: '1.91:1',
+    intents: [<Button.Reset>Try again</Button.Reset>],
+  });
+}
 
-  const delegates = previousState.delegatesRandom;
+const delegates = previousState.delegatesRandom;
 
-
-if (delegates.length === 0) {
+/* if (delegates.length === 0) {
   return c.res({
     image: `/Frame_8_no_followers.png`,
     imageAspectRatio: '1.91:1',
     intents: [<Button.Reset>Try again</Button.Reset>],
   });
-}
+} */
 
 const intents = getIntentsRandom(delegates);
 intents.push(<Button.Reset>Reset</Button.Reset>);
