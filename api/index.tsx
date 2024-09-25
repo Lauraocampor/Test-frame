@@ -211,11 +211,10 @@ const {  previousState } = c;
     })
   }
 
-  const userDelegate = truncateWord(delegate.delegateInfo.warpcast, 9)
+  const userDelegate = 'lauraocamporodri'
   const addressDelegate = truncateMiddle(delegate.delegateInfo.delegateAddress, 11)
 
   const delegateData = userDelegate? userDelegate : addressDelegate
-  const delegateUpperCase= delegateData.toUpperCase()
 
   /* TEST BAD DELEGATE FRAME */
   delegate.isGoodDelegate = false
@@ -223,46 +222,56 @@ const {  previousState } = c;
   /* BAD DELEGATE FRAME */
   if(!delegate.isGoodDelegate) {
     return c.res({
-      image: (
+        image: (
+<div style={{
+    display: 'flex',
+    background: '#f6f6f6',
+    width: '100%',
+    height: '100%',
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    position: 'relative',
+    overflow: 'hidden'
+}}>
+    <img width="1200" height="630" alt="background" src={`/Frame_2.1_bad_delegate_stats_dynamic.png`} style={{position: 'absolute', width: '100%', height: '100%', objectFit: 'cover'}} />
+    
+    <div
+        style={{
+            display: 'flex',
+            flexDirection: 'column',
+            position: 'absolute',
+            color: '#161B33',
+            fontSize: '75px',
+            textTransform: 'uppercase',
+            letterSpacing: '-0.035em',
+            width: '90%',
+            padding: '10px',
+            top: '8%',
+            height: '30%',
+            overflow: 'hidden',
+            lineHeight: 0.8,
+            textAlign: 'right',
+            transform: 'translateX(-70px)'
+        }}
+    >
         <div style={{
-          display: 'flex',
-          background: '#f6f6f6',
-          width: '100%',
-          height: '100%',
-          flexDirection: 'column',
-          justifyContent: 'flex-end',
-          alignItems: 'center',
-          position: 'relative'
+            display: 'flex',
+            justifyContent: 'flex-end',
+            width: '100%',
+            flexWrap: 'wrap'
         }}>
-          {/* @ts-ignore */}
-          <img width="1200" height="630" alt="background" src={`/Frame_2.1_stats_dynamic.png`} style={{position: 'absolute', width: '100%', height: '100%', objectFit: 'cover'}} />
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              position: 'absolute',
-              color: '#161B33',
-              fontSize: '65px',
-              textTransform: 'uppercase',
-              letterSpacing: '-0.035em',
-              width: '100%',
-              maxWidth: '100%',
-              boxSizing: 'border-box',
-              alignItems: 'center',
-              lineHeight: 0.8,
-              padding: '10px',
-              overflow: 'hidden', 
-              textOverflow: 'ellipsis',
-              textAlign: 'center', 
-              top: '8%',
-              height: '30%',
-              whiteSpace: 'wrap'
-            }}
-          >            
-          <div style={{display: 'flex', wordWrap: 'break-word', flexWrap: 'wrap', width: '100%',
-    maxWidth: '100%', margin: '0 10px', justifyContent: 'center',}}>Did <div style={{display: 'flex', color: '#E5383B'}}>{delegateUpperCase}</div> vote in the most recent proposal?</div>
-          </div>
+            <div style={{ marginRight: '10px' }}>Did</div>
+            <div style={{display: 'flex', color: '#E5383B', margin: '0 10px' }}>{delegateData}</div>
+            <div style={{ marginLeft: '10px' }}>vote</div>
+            <div style={{ marginLeft: '10px' }}>in</div>
+            <div style={{ marginLeft: '10px' }}>the</div>
+            <div style={{ marginLeft: '10px' }}>most</div>
+            <div style={{ marginLeft: '10px' }}>recent</div>
+            <div style={{ marginLeft: '10px' }}>proposal?</div>
         </div>
+    </div>
+</div>
       ),
         intents: [
           <Button action='/socialRecommendation'>Social Graph</Button>,
@@ -287,7 +296,7 @@ const {  previousState } = c;
           height: '100%',
           flexDirection: 'column',
           justifyContent: 'flex-end',
-          alignItems: 'center',
+          alignItems: 'flex-end',
           position: 'relative'
         }}>
           {/* @ts-ignore */}
@@ -316,7 +325,7 @@ const {  previousState } = c;
             }}
           >            
           <div style={{display: 'flex', wordWrap: 'break-word', flexWrap: 'wrap', width: '100%',
-    maxWidth: '100%', margin: '0 10px', justifyContent: 'center',}}>Did <div style={{display: 'flex', color: '#E5383B'}}>{delegateUpperCase}</div> vote in the most recent proposal?</div>
+    maxWidth: '100%', margin: '0 10px', justifyContent: 'center',}}>Did <div style={{display: 'flex', color: '#E5383B'}}>{delegateData}</div> vote in the most recent proposal?</div>
           </div>
         </div>
       ),
@@ -365,7 +374,7 @@ app.frame('/socialRecommendation', async (c) => {
   const delegates = previousState.delegates;
   
   /* TEST FRAMES */
-  delegates.length = 0
+  //delegates.length = 0
 
   if (delegates.length === 0) {
     const delegates = previousState.delegatesRandom;
