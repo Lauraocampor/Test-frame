@@ -183,6 +183,34 @@ function truncateWord(str: string, maxLength: number) {
 app.frame('/delegatesStats', async (c) => {
 const {  previousState } = c;
 
+const fid = 192336
+
+if (typeof fid !== 'number' || fid === null){
+  return c.res({
+    image: `/Frame_6_error.png`,
+    imageAspectRatio: '1.91:1',
+    intents: [
+      <Button.Reset>Try again</Button.Reset>,
+    ],
+  })
+}
+
+previousState.fid = fid
+
+const delegate = await getStats(fid);
+
+if(previousState.delegates.length === 0){
+    getSuggestedDelegates(fid).then((data) => {
+    previousState.delegates = data;
+  });
+}
+
+if(previousState.delegatesRandom.length === 0){
+  getRandomDelegates(fid).then((data) => {
+    previousState.delegatesRandom = data;
+  });
+}
+
 /*  const fid = previousState.fid
 
  if (typeof fid !== 'number' || fid === null){
@@ -194,8 +222,6 @@ const {  previousState } = c;
       ],
     })
   } */
-
-  const delegate = previousState.delegate;
 
   /* NO VERIFIED ADDRESS FRAME */
 
