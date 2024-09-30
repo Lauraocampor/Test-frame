@@ -212,7 +212,7 @@ if(previousState.delegatesRandom.length === 0){
 
 
   /* TEST BAD DELEGATE FRAME */
-  delegate.isGoodDelegate = false
+  //delegate.isGoodDelegate = false
 
   /* BAD DELEGATE FRAME */
   if(!delegate.isGoodDelegate) {
